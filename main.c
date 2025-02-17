@@ -5,7 +5,7 @@
 #include "processamento.h"
 #include "utils.h"
 
-#define N_Interacoes 0 // Para medicao de tempo de processamento paralelizado (numero de iteracoes)
+#define N_Interacoes 50000 // Para medicao de tempo de processamento paralelizado (numero de iteracoes)
 #define MAX_CANDIDATOS 1000
 #define NUM_QUESTOES 30
 #define codigoDisciplina "0701"
