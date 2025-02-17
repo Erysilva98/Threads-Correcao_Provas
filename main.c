@@ -5,7 +5,7 @@
 #include "processamento.h"
 #include "utils.h"
 
-#define N_Interacoes 50000 // Para medicao de tempo de processamento paralelizado (numero de iteracoes)
+#define N_Interacoes 0 // Para medicao de tempo de processamento paralelizado (numero de iteracoes)
 #define MAX_CANDIDATOS 1000
 #define NUM_QUESTOES 30
 #define codigoDisciplina "0701"
@@ -77,8 +77,15 @@ int main(int argc, char *argv[])
         double t_final = omp_get_wtime();
         tempo_total += (t_final - t_inicial);
     }
-    double tempo_medio = tempo_total / iteracoes;
-    printf("Tempo de processamento paralelizado (media de %d iteracoes): %f segundos\n", N_Interacoes, tempo_medio);
+    if (iteracoes > 0)
+    {
+        double tempo_medio = tempo_total / iteracoes;
+        printf("Tempo de processamento paralelizado (media de %d iteracoes): %f segundos\n", iteracoes, tempo_medio);
+    }
+    else
+    {
+        printf("N_Interacoes nao definido ou igual a zero, simulacao de tempo de processamento nao calculado.\n");
+    }
 
     // Ordenacao dos candidatos (sequencial)
     ordenarClassificados(candidatos, quantidade);
