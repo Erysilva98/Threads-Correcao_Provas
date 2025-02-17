@@ -13,8 +13,7 @@ void calcularNotas(Candidato candidatos[], int quantidade, Gabarito *gabarito)
         gabarito->acertos[i] = 0;
     }
 
-// *** Tarefa 1: Comparar as respostas dos candidatos com o gabarito ***
-// (Esta etapa é paralelizável: cada candidato é processado de forma independente)
+// Tarefa 1: Comparar as respostas dos candidatos com o gabarito (paralelizável)
 #pragma omp parallel for private(j)
     for (i = 0; i < quantidade; i++)
     {
@@ -35,7 +34,7 @@ void calcularNotas(Candidato candidatos[], int quantidade, Gabarito *gabarito)
         porcentagens[i] = ((float)gabarito->acertos[i] / quantidade) * 100.0;
     }
 
-    // *** Tarefa 2: Cálculo do valor de cada questão para cada componente curricular ***
+    // Tarefa 2: Cálculo do valor de cada questão para cada componente curricular
     // Para cada componente (0: Língua Portuguesa, 1: Matemática e Lógica, 2: Conhecimento Específico)
     for (int comp = 0; comp < 3; comp++)
     {
@@ -77,7 +76,7 @@ void calcularNotas(Candidato candidatos[], int quantidade, Gabarito *gabarito)
         }
     }
 
-// *** Tarefa 3: Cálculo das notas dos candidatos ***
+// Tarefa 3: Cálculo das notas dos candidatos
 // Para cada candidato, se a resposta estiver correta, soma-se o valor P(n) da questão
 #pragma omp parallel for private(j)
     for (i = 0; i < quantidade; i++)

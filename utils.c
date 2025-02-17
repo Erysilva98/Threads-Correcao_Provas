@@ -40,6 +40,7 @@ void removeQuotes(char *str)
     int len = strlen(str);
     if (len >= 2 && str[0] == '\"' && str[len - 1] == '\"')
     {
+        // Remove as aspas deslocando o conteúdo para a esquerda
         memmove(str, str + 1, len - 2);
         str[len - 2] = '\0';
     }

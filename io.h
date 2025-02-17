@@ -7,5 +7,6 @@
 int lerRespostas(const char *nomeArquivo, Candidato candidatos[], int *quantidade, const char *codigoDisciplina);
 int lerGabarito(const char *nomeArquivo, Gabarito *gabarito);
 int gerarRelatorio(Candidato candidatos[], int quantidade, const char *nomeArquivo);
+int gerarFiltro(Candidato candidatos[], int quantidade, const char *nomeArquivo);
 
 #endif

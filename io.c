@@ -6,6 +6,7 @@
 
 #define BUFFER_SIZE 1024
 
+// Lê o arquivo respostas.csv, filtrando candidatos com o código especificado
 int lerRespostas(const char *nomeArquivo, Candidato candidatos[], int *quantidade, const char *codigoDisciplina)
 {
     FILE *file = fopen(nomeArquivo, "r");
@@ -16,7 +17,7 @@ int lerRespostas(const char *nomeArquivo, Candidato candidatos[], int *quantidad
     }
     char buffer[BUFFER_SIZE];
     int count = 0;
-    
+
     // Lê cada linha do arquivo
     while (fgets(buffer, BUFFER_SIZE, file))
     {
@@ -52,12 +53,13 @@ int lerRespostas(const char *nomeArquivo, Candidato candidatos[], int *quantidad
             token = strtok(NULL, ",");
             if (token == NULL)
                 break;
+            removeQuotes(token);
             // Cada resposta é considerada como um único caractere
             respostas[i] = token[0];
         }
         if (i != NUM_QUESTOES)
         {
-            // Linha com respostas insuficientes; pode ser ignorada ou tratado conforme necessário
+            // Linha com respostas insuficientes; ignora a linha
             continue;
         }
         respostas[NUM_QUESTOES] = '\0'; // Finaliza a string
@@ -78,6 +80,7 @@ int lerRespostas(const char *nomeArquivo, Candidato candidatos[], int *quantidad
     return 0;
 }
 
+// Lê o arquivo gabarito.csv com as 30 respostas oficiais
 int lerGabarito(const char *nomeArquivo, Gabarito *gabarito)
 {
     FILE *file = fopen(nomeArquivo, "r");
@@ -101,7 +104,7 @@ int lerGabarito(const char *nomeArquivo, Gabarito *gabarito)
         char *token = strtok(i == 0 ? buffer : NULL, ",");
         if (token == NULL)
             break;
-        // Cada resposta é um caractere
+        removeQuotes(token);
         gabarito->gabarito[i] = token[0];
     }
     if (i != NUM_QUESTOES)
@@ -110,7 +113,7 @@ int lerGabarito(const char *nomeArquivo, Gabarito *gabarito)
         return -1;
     }
     gabarito->gabarito[NUM_QUESTOES] = '\0';
-    // Inicializa os arrays de acertos e valores das questões
+    // Inicializa os arrays de acertos e dos pesos das questões
     for (i = 0; i < NUM_QUESTOES; i++)
     {
         gabarito->acertos[i] = 0;
@@ -120,6 +123,7 @@ int lerGabarito(const char *nomeArquivo, Gabarito *gabarito)
     return 0;
 }
 
+// Gera o relatório final em classificados.csv com os dados dos candidatos ordenados
 int gerarRelatorio(Candidato candidatos[], int quantidade, const char *nomeArquivo)
 {
     FILE *file = fopen(nomeArquivo, "w");
@@ -141,6 +145,32 @@ int gerarRelatorio(Candidato candidatos[], int quantidade, const char *nomeArqui
                 candidatos[i].notas[2],
                 candidatos[i].mediaFinal,
                 i + 1);
+    }
+    fclose(file);
+    return 0;
+}
+
+// Gera o arquivo filtro.csv contendo os candidatos filtrados (mesmo formato do CSV original)
+int gerarFiltro(Candidato candidatos[], int quantidade, const char *nomeArquivo)
+{
+    FILE *file = fopen(nomeArquivo, "w");
+    if (!file)
+    {
+        perror("Erro ao abrir o arquivo filtro para escrita");
+        return -1;
+    }
+    // Cabeçalho do CSV (opcional)
+    fprintf(file, "ID,Codigo,Respostas\n");
+    int i, j;
+    for (i = 0; i < quantidade; i++)
+    {
+        // Imprime o ID e o código fixo "0701", e em seguida as 30 respostas individuais
+        fprintf(file, "\"%s\",\"0701\"", candidatos[i].id);
+        for (j = 0; j < NUM_QUESTOES; j++)
+        {
+            fprintf(file, ",\"%c\"", candidatos[i].respostas[j]);
+        }
+        fprintf(file, "\n");
     }
     fclose(file);
     return 0;
